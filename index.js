@@ -12,7 +12,7 @@
 const http = require("http");
 require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
 const { handleReqRes } = require("./helpers/handleReqRes");
-const { create } = require("./lib/data");
+const { read, create, update, remove, readFolder } = require("./lib/data");
 
 // app scaffolding :
 

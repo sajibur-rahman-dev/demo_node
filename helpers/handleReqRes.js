@@ -1,9 +1,9 @@
 /**
  *
- * Title : Handle req and res
- * Description : Handler function for req and res
- * Author : Sajibur Rahman
- * Date : 19 sept., 2025
+ * Title : Handle req and res !!!
+ * Description : Handler function for req and res !!!
+ * Author : Sajibur Rahman !!!
+ * Date : 19 sept., 2025 !!!
  *
  */
 
@@ -15,6 +15,7 @@ const routes = require("../routes");
 const {
   notFoundRouteHandler,
 } = require("../handlers/routesHandlers/notFoundHandler");
+const { parseJson } = require("../utils/convertJson");
 
 // handler scaffolding
 
@@ -52,11 +53,14 @@ handler.handleReqRes = (req, res) => {
   });
 
   req.on("end", () => {
+    requestedParamaeters.body = parseJson(reqData);
+
     requestedRouteHandler(requestedParamaeters, (statusCode, payload) => {
       const respondedStatusCode =
         typeof statusCode === "number" ? statusCode : 500;
       const respondedPayload = typeof payload === "object" ? payload : {};
 
+      res.setHeader("Content-Type", "application/json");
       res.writeHead(respondedStatusCode);
       res.end(JSON.stringify(respondedPayload));
     });

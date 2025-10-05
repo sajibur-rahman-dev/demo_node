@@ -14,6 +14,10 @@ const {
 } = require("./handlers/routesHandlers/aboutRouteHandler");
 
 const {
+  userRouteHandler,
+} = require("./handlers/routesHandlers/userRouteHandler");
+
+const {
   notFoundRouteHandler,
 } = require("./handlers/routesHandlers/notFoundHandler");
 
@@ -21,6 +25,7 @@ const {
 
 const routes = {
   about: aboutRouteHandler,
+  user: userRouteHandler,
 };
 
 // module exports
