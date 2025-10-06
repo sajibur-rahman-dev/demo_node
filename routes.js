@@ -21,11 +21,16 @@ const {
   notFoundRouteHandler,
 } = require("./handlers/routesHandlers/notFoundHandler");
 
+const {
+  tokenRouteHandler,
+} = require("./handlers/routesHandlers/tokenRouterHandler");
+
 // routes -  module scaffolding
 
 const routes = {
   about: aboutRouteHandler,
   user: userRouteHandler,
+  token: tokenRouteHandler,
 };
 
 // module exports

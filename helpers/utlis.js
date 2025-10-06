@@ -16,4 +16,24 @@ utils.convertStrToHash = (str) => {
   return false;
 };
 
+// generate 20 character string:
+
+utils.generateRandomStr = (strLen) => {
+  const charLen = typeof strLen === "number" && strLen > 0 ? strLen : false;
+
+  if (charLen) {
+    const possibleChar = "abcdefghijklmnopqrstuvwxyz1234567890!@#$%";
+    let output = "";
+
+    for (let i = 1; i <= charLen; i++) {
+      const randomChar = possibleChar.charAt(
+        Math.floor(Math.random() * possibleChar.length)
+      );
+      output += randomChar;
+    }
+    return output;
+  }
+  return false;
+};
+
 module.exports = utils;
