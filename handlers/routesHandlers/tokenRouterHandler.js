@@ -89,6 +89,7 @@ handler._token.post = (requestedParamaeters, callback) => {
             if (!err) {
               callback(200, {
                 message: "Token create successfully",
+                data: token,
               });
             } else {
               callback(500, {
@@ -115,43 +116,46 @@ handler._token.post = (requestedParamaeters, callback) => {
 };
 
 handler._token.put = (requestedParamaeters, callback) => {
-  const reqUserData = { ...requestedParamaeters.body };
-  reqUserData.password = convertStrToHash(reqUserData.password);
+  const reqTokenData = { ...requestedParamaeters.body };
 
-  const phone =
-    typeof reqUserData?.phone === "string" &&
-    reqUserData?.phone?.trim().length === 11
-      ? reqUserData?.phone
+  const tokenId =
+    typeof reqTokenData?.tokenId === "string" &&
+    reqTokenData?.tokenId?.trim().length === 20
+      ? reqTokenData?.tokenId
       : "";
 
-  console.log(reqUserData);
+  const extend = !!(
+    typeof reqTokenData?.extend === "boolean" && reqTokenData?.extend === true
+  );
 
-  if (phone) {
-    read("users", phone, (readErr, existingUser) => {
-      if (!readErr && existingUser) {
-        const updatedUser = { ...existingUser };
+  if (tokenId && extend) {
+    read("tokens", tokenId, (readErr, existingToken) => {
+      if (!readErr && existingToken) {
+        const updatedToken = { ...existingToken };
 
-        updatedUser.firstName =
-          reqUserData?.firstName && reqUserData?.firstName;
+        if (updatedToken.expire > Date.now()) {
+          updatedToken.expire = Date.now() + 60 * 60 * 1000;
 
-        updatedUser.lastName = reqUserData?.lastName && reqUserData?.lastName;
-
-        updatedUser.password = reqUserData?.password && reqUserData?.password;
-
-        update("users", phone, updatedUser, (err) => {
-          if (!err) {
-            callback(200, {
-              message: "successfully updated",
-            });
-          } else {
-            callback(500, {
-              message: err,
-            });
-          }
-        });
+          update("tokens", tokenId, updatedToken, (err) => {
+            if (!err) {
+              callback(200, {
+                message: "successfully extend token expires date",
+                data: updatedToken,
+              });
+            } else {
+              callback(500, {
+                message: "token updated failed",
+              });
+            }
+          });
+        } else {
+          callback(500, {
+            error: "token already expired",
+          });
+        }
       } else {
         callback(500, {
-          error: readErr,
+          error: "Token not found",
         });
       }
     });
@@ -163,32 +167,47 @@ handler._token.put = (requestedParamaeters, callback) => {
 };
 
 handler._token.delete = (requestedParamaeters, callback) => {
-  const reqQuery = { ...requestedParamaeters.query };
+  const reqTokenQuery = { ...requestedParamaeters.query };
 
-  const phone =
-    typeof reqQuery?.phone === "string" && reqQuery?.phone?.trim().length === 11
-      ? reqQuery?.phone
+  const tokenId =
+    typeof reqTokenQuery?.tokenId === "string" &&
+    reqTokenQuery?.tokenId?.trim().length === 20
+      ? reqTokenQuery?.tokenId
       : "";
 
-  if (phone) {
-    remove("users", phone, (err) => {
+  if (tokenId) {
+    remove("tokens", tokenId, (err) => {
       if (!err) {
         callback(200, {
-          message: "file deleted successfully",
+          message: "token deleted successfully",
         });
       } else {
         callback(500, {
-          message: err,
+          message: "Token doesn't exist!!!",
         });
       }
     });
   } else {
     callback(400, {
-      error: "User doesn't exist!!!",
+      error: "Bad request",
     });
   }
 };
 
+handler._token.verify = (tokenId, phone, callback) => {
+  read("tokens", tokenId, (err, tokenData) => {
+    console.log(tokenData);
+    if (!err && tokenData) {
+      if (tokenData.phone === phone && tokenData.expire > Date.now()) {
+        callback(true);
+      } else {
+        callback(false);
+      }
+    } else {
+      callback(false);
+    }
+  });
+};
 // module exports
 
 module.exports = handler;

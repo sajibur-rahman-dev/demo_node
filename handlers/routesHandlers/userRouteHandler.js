@@ -12,6 +12,7 @@
 const crypto = require("crypto");
 const { convertStrToHash } = require("../../helpers/utlis");
 const { read, create, update, remove } = require("../../lib/data");
+const tokenVerifyHandler = require("./tokenRouterHandler");
 
 // handler - module scaffolding
 
@@ -33,19 +34,45 @@ handler._user = {};
 // method handler
 
 handler._user.get = (requestedParamaeters, callback) => {
-  read("users", reqUserData.phone, (err, data) => {
-    const user = { ...data };
+  const reqUserQuery = { ...requestedParamaeters.query };
+  const reqUserHeaders = { ...requestedParamaeters.headers };
 
-    delete user.password;
+  const phone =
+    typeof reqUserQuery.phone === "string" &&
+    reqUserQuery.phone.trim().length === 11
+      ? reqUserQuery.phone
+      : "";
 
-    if (!err && data) {
-      callback(200, user);
-    } else {
-      callback(500, {
-        message: err,
-      });
-    }
-  });
+  const token =
+    typeof reqUserHeaders.token === "string" ? reqUserHeaders.token : "";
+
+  if (phone) {
+    tokenVerifyHandler._token.verify(token, phone, (tokenVerified) => {
+      if (tokenVerified) {
+        read("users", phone, (err, data) => {
+          const user = { ...data };
+
+          delete user.password;
+
+          if (!err && data) {
+            callback(200, user);
+          } else {
+            callback(500, {
+              message: "user not found",
+            });
+          }
+        });
+      } else {
+        callback(403, {
+          error: "Unauthorize User!!!",
+        });
+      }
+    });
+  } else {
+    callback(400, {
+      error: "Bad request!!!",
+    });
+  }
 };
 
 handler._user.post = (requestedParamaeters, callback) => {
