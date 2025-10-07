@@ -25,12 +25,17 @@ const {
   tokenRouteHandler,
 } = require("./handlers/routesHandlers/tokenRouterHandler");
 
+const {
+  monitoredUrlRouteHandler,
+} = require("./handlers/routesHandlers/monitoredUrlRouteHandler");
+
 // routes -  module scaffolding
 
 const routes = {
   about: aboutRouteHandler,
   user: userRouteHandler,
   token: tokenRouteHandler,
+  monitoredUrl: monitoredUrlRouteHandler,
 };
 
 // module exports
