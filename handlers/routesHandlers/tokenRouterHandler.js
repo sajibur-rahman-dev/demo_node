@@ -196,7 +196,6 @@ handler._token.delete = (requestedParamaeters, callback) => {
 
 handler._token.verify = (tokenId, phone, callback) => {
   read("tokens", tokenId, (err, tokenData) => {
-    console.log(tokenData);
     if (!err && tokenData) {
       if (tokenData.phone === phone && tokenData.expire > Date.now()) {
         callback(true);

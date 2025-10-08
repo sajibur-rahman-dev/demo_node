@@ -22,7 +22,7 @@ utils.generateRandomStr = (strLen) => {
   const charLen = typeof strLen === "number" && strLen > 0 ? strLen : false;
 
   if (charLen) {
-    const possibleChar = "abcdefghijklmnopqrstuvwxyz1234567890!@#$%";
+    const possibleChar = "abcdefghijklmnopqrstuvwxyz1234567890";
     let output = "";
 
     for (let i = 1; i <= charLen; i++) {
