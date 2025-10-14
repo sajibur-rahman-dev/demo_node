@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon index.js",
-    "stage": "NODE_ENV=staging nodemon index.js",
-    "start": "NODE_ENV=production nodemon index.js",
+    "dev": "NODE_ENV=development nodemon main.js",
+    "stage": "NODE_ENV=staging nodemon main.js",
+    "start": "NODE_ENV=production nodemon main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
